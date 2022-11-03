@@ -5,7 +5,7 @@ package fr.pantheonsorbonne.miage.enums;
  */
 public enum CardValue {
     ACE("1", 14),
-    TWO("2", 2),
+    TWO("2", 15),
     THREE("3", 3),
     FOUR("4", 4),
     FIVE("5", 5),

@@ -11,8 +11,8 @@ import java.util.stream.Collectors;
  */
 public class LocalWarGame extends WarGameEngine {
 
-    private final Set<String> initialPlayers;
-    private final Map<String, Queue<Card>> playerCards = new HashMap<>();
+    final Set<String> initialPlayers;
+    final Map<String, Queue<Card>> playerCards = new HashMap<>();
 
     public LocalWarGame(Set<String> initialPlayers) {
         this.initialPlayers = initialPlayers;
@@ -79,5 +79,17 @@ public class LocalWarGame extends WarGameEngine {
         } else {
             return this.playerCards.get(player).poll();
         }
+    }
+
+    private final static  Card DAME_COEUR = Card.valueOf("QH"); 
+
+    @Override
+    protected String getPlayerWithQueenOFHeart() {
+        for (String playerName : this.playerCards.keySet()){
+            if (this.playerCards.get(playerName).contains(DAME_COEUR)) {
+                return playerName;
+            }
+        }
+        throw new RuntimeException();
     }
 }

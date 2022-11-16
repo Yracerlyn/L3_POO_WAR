@@ -135,4 +135,10 @@ public class WarGameNetworkEngine extends WarGameEngine {
 
     }
 
+    @Override
+    protected String getPlayerWithQueenOFHeart() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }

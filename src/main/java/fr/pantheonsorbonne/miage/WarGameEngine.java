@@ -14,7 +14,7 @@ import java.util.Set;
  */
 public abstract class WarGameEngine {
 
-    public static final int CARDS_IN_HAND_INITIAL_COUNT = 3;
+    public static final int CARDS_IN_HAND_INITIAL_COUNT = 13;
 
     /**
      * play a war game wit the provided players
@@ -64,6 +64,8 @@ public abstract class WarGameEngine {
         System.exit(0);
     }
 
+    protected abstract String getPlayerWithQueenOFHeart();
+
     /**
      * provide the list of the initial players to play the game
      *
@@ -84,26 +86,39 @@ public abstract class WarGameEngine {
      *
      * @param players             the queue containing the remaining players
      * @param firstPlayerInRound  the first contestant in this round
-     * @param secondPlayerInRound the second contestant in this roun
+     * @param secondPlayerInRound the second contestant in this round
      * @param roundDeck           possible cards left over from previous rounds
      * @return true if we have a winner for this round, false otherwise
      */
     protected boolean playRound(Queue<String> players, String firstPlayerInRound, String secondPlayerInRound, Queue<Card> roundDeck) {
 
+        //int consecutiveNoPlays = 0;
+        //boolean endRound = false;
 
-        //here, we try to get the first player card
-        Card firstPlayerCard = getCardOrGameOver(roundDeck, firstPlayerInRound, secondPlayerInRound);
-        if (firstPlayerCard == null) {
-            players.remove(firstPlayerInRound);
-            return true;
-        }
-        //here we also get the second player card
-        Card secondPlayerCard = getCardOrGameOver(roundDeck, secondPlayerInRound, firstPlayerInRound);
-        if (secondPlayerCard == null) {
-            players.remove(secondPlayerInRound);
-            return true;
-        }
+        //while (!endRound && consecutiveNoPlays>1) {}
 
+        //while (!players.isEmpty() && players.size()>0)
+        
+            //here, we try to get the first player card
+            Card firstPlayerCard = getCardOrGameOver(roundDeck, firstPlayerInRound, secondPlayerInRound);
+            if (firstPlayerCard == null) {
+                players.remove(firstPlayerInRound);
+                return true;
+            }
+            //here we also get the second player card
+            Card secondPlayerCard = getCardOrGameOver(roundDeck, secondPlayerInRound, firstPlayerInRound);
+            if (secondPlayerCard == null) {
+                players.remove(secondPlayerInRound);
+                return true;
+            } 
+
+
+            
+        /*
+         * if (firstPlayerCard >= lastCardOfRoundDeck) {
+            roundDeck.offer(firstPlayerCard);
+        }
+         */
         //put the two cards on the roundDeck
         roundDeck.offer(firstPlayerCard);
         roundDeck.offer(secondPlayerCard);
@@ -136,7 +151,7 @@ public abstract class WarGameEngine {
      */
     protected abstract Card getCardOrGameOver(Collection<Card> leftOverCard, String cardProviderPlayer, String cardProviderPlayerOpponent);
 
-    /**
+    /**  
      * give the winner of a round
      *
      * @param contestantA     a contestant

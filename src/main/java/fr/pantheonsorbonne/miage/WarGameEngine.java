@@ -3,7 +3,10 @@ package fr.pantheonsorbonne.miage;
 import fr.pantheonsorbonne.miage.exception.NoMoreCardException;
 import fr.pantheonsorbonne.miage.game.Card;
 import fr.pantheonsorbonne.miage.game.Deck;
+import fr.pantheonsorbonne.miage.game.Role;
+import fr.pantheonsorbonne.miage.game.pile;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -15,7 +18,11 @@ import java.util.Set;
 public abstract class WarGameEngine {
 
     public static final int CARDS_IN_HAND_INITIAL_COUNT = 13;
-
+    protected boolean firstPartie = true;
+    final protected int [] numberParty = new int [2];
+    private pile pile;
+    private ArrayList<Card> cartes;
+    
     /**
      * play a war game wit the provided players
      */
@@ -32,8 +39,19 @@ public abstract class WarGameEngine {
         // make a queue with all the players
         final Queue<String> players = new LinkedList<>();
         players.addAll(this.getInitialPlayers());
+
+        if (getFirstParty()){
+            String firstPlayerInRound = ((LocalWarGame) players).getPlayerWithQueenOFHeart();
+
+        }
+        else{
+            String firstPlayerInRound= ((LocalWarGame)players).getPresident();
+        }
+
+       
+
         //repeat until only 1 player is left
-        while (players.size() > 1) {
+        /*while (players.size() > 1) {
             //these are the cards played by the players on this round
             Queue<Card> roundDeck = new LinkedList<>();
 
@@ -53,9 +71,9 @@ public abstract class WarGameEngine {
 
                 if (playRound(players, firstPlayerInRound, secondPlayerInRound, roundDeck)) break;
             }
+     
 
-
-        }
+        }   */
         //since we've left the loop, we have only 1 player left: the winner
         String winner = players.poll();
         //send him the gameover and leave
@@ -65,6 +83,19 @@ public abstract class WarGameEngine {
     }
 
     protected abstract String getPlayerWithQueenOFHeart();
+    protected abstract String getPresident();
+    protected abstract boolean getFirstParty();
+    protected boolean isInferieure() {
+		return this.cartes.get(0).getValue().compareTo(this.pile.getCartes().get(this.pile.getCartes().size() - 1).getValue()) < 0;
+	}
+
+    protected boolean isSuperieure() {
+		return this.cartes.get(0).getValue().compareTo(this.pile.getCartes().get(this.pile.getCartes().size() - 1).getValue()) > 0;
+	}
+
+    private boolean isEgale() {
+		return this.cartes.get(0).getValue().compareTo(this.pile.getCartes().get(this.pile.getCartes().size() - 1).getValue()) == 0;
+	}
 
     /**
      * provide the list of the initial players to play the game

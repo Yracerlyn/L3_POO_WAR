@@ -141,4 +141,16 @@ public class WarGameNetworkEngine extends WarGameEngine {
         return null;
     }
 
+    @Override
+    protected String getPresident() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    protected boolean getFirstParty() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
 }

@@ -10,6 +10,7 @@ import java.util.Queue;
 import org.junit.jupiter.api.Test;
 
 import fr.pantheonsorbonne.miage.game.Card;
+import fr.pantheonsorbonne.miage.game.Role;
 
 /**
  * Unit test for simple App.
@@ -42,6 +43,43 @@ public class AppTest
         test1.playerCards.put("J2", cardJ2);
 
         assertEquals("J1", test1.getPlayerWithQueenOFHeart());
+    }
+
+    @Test
+    public void getPresident(){
+        HashSet<String> players = new HashSet<>();
+        players.add("J1");
+        players.add("J2");
+
+        var test2 = new LocalWarGame(players);
+        Queue<Role> role1 = new LinkedList<>();
+        Queue<Role> role2 = new LinkedList<>();
+
+        role1.add(Role.HaveRole("1"));
+        role2.add(Role.HaveRole("2"));
+
+        test2.playerRole.put("J1", role1);
+        test2.playerRole.put("J2", role2);
+
+        assertEquals("J1", test2.getPresident());
+
+    }
+
+    @Test
+    public void findBestCardinPlayerHand() {
+        HashSet<String> players = new HashSet<>();
+        players.add("J1");
+
+        var test3 = new LocalWarGame(players);
+        Queue<Card> cardJ1 = new LinkedList<>();
+        Queue<Card> cardJ2 = new LinkedList<>();
+        cardJ1.add(Card.valueOf("QH"));
+        cardJ2.add(Card.valueOf("KH"));
+
+        test3.playerCards.put("J1", cardJ1);
+        test3.playerCards.put("J1", cardJ2);
+
+        assertEquals("KH", test3.findBestCardinPlayerHand());
     }
 
 }

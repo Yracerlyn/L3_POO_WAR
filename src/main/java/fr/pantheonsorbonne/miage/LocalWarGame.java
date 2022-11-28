@@ -2,6 +2,8 @@ package fr.pantheonsorbonne.miage;
 
 import fr.pantheonsorbonne.miage.exception.NoMoreCardException;
 import fr.pantheonsorbonne.miage.game.Card;
+import fr.pantheonsorbonne.miage.game.Role;
+import fr.pantheonsorbonne.miage.enums.CardValue;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -12,17 +14,20 @@ import java.util.stream.Collectors;
 public class LocalWarGame extends WarGameEngine {
 
     final Set<String> initialPlayers;
+    Queue<Card> carte = new LinkedList<>();
     final Map<String, Queue<Card>> playerCards = new HashMap<>();
+    final Map<String, Queue<Role>> playerRole = new HashMap<>();
 
     public LocalWarGame(Set<String> initialPlayers) {
         this.initialPlayers = initialPlayers;
         for (String player : initialPlayers) {
             playerCards.put(player, new LinkedList<>());
+            playerRole.put(player, new LinkedList<>());
         }
     }
 
     public static void main(String... args) {
-        LocalWarGame localWarGame = new LocalWarGame(Set.of("Joueur1", "Joueur2", "Joueur3"));
+        LocalWarGame localWarGame = new LocalWarGame(Set.of("Joueur1", "Joueur2", "Joueur3", "Joueur4"));
         localWarGame.play();
 
     }
@@ -41,7 +46,14 @@ public class LocalWarGame extends WarGameEngine {
     @Override
     protected boolean playRound(Queue<String> players, String playerA, String playerB, Queue<Card> roundDeck) {
         System.out.println("New round:");
-        System.out.println(this.playerCards.keySet().stream().filter(p -> !this.playerCards.get(p).isEmpty()).map(p -> p + " has " + this.playerCards.get(p).stream().map(c -> c.toFancyString()).collect(Collectors.joining(" "))).collect(Collectors.joining("\n")));
+        System.out
+                .println(
+                        this.playerCards
+                                .keySet().stream().filter(p -> !this.playerCards.get(p).isEmpty()).map(
+                                        p -> p + " has "
+                                                + this.playerCards.get(p).stream().map(c -> c.toFancyString())
+                                                        .collect(Collectors.joining(" ")))
+                                .collect(Collectors.joining("\n")));
         System.out.println();
         return super.playRound(players, playerA, playerB, roundDeck);
 
@@ -53,7 +65,8 @@ public class LocalWarGame extends WarGameEngine {
     }
 
     @Override
-    protected Card getCardOrGameOver(Collection<Card> leftOverCard, String cardProviderPlayer, String cardProviderPlayerOpponent) {
+    protected Card getCardOrGameOver(Collection<Card> leftOverCard, String cardProviderPlayer,
+            String cardProviderPlayerOpponent) {
 
         if (!this.playerCards.containsKey(cardProviderPlayer) || this.playerCards.get(cardProviderPlayer).isEmpty()) {
             this.playerCards.get(cardProviderPlayerOpponent).addAll(leftOverCard);
@@ -81,15 +94,105 @@ public class LocalWarGame extends WarGameEngine {
         }
     }
 
-    private final static  Card DAME_COEUR = Card.valueOf("QH"); 
+    private final static Card DAME_COEUR = Card.valueOf("QH");
 
     @Override
     protected String getPlayerWithQueenOFHeart() {
-        for (String playerName : this.playerCards.keySet()){
+        for (String playerName : this.playerCards.keySet()) {
             if (this.playerCards.get(playerName).contains(DAME_COEUR)) {
                 return playerName;
             }
         }
         throw new RuntimeException();
+    }
+
+    private final static Role PRESIDENT = Role.HaveRole("1");
+
+    @Override
+    protected String getPresident() {
+        for (String playerName : this.playerRole.keySet()) {
+            if (this.playerRole.get(playerName).contains(PRESIDENT)) {
+                return playerName;
+            }
+        }
+        throw new RuntimeException();
+    }
+
+    @Override
+    protected boolean getFirstParty() {
+        for (int i = 0; i < numberParty.length; i++) {
+            if (i == 0) {
+                firstPartie = true;
+            } else {
+                firstPartie = false;
+            }
+        }
+        return firstPartie;
+    }
+
+    protected Card findBestCardinPlayerHand() {
+        Card BestCard = ((Queue<Card>) playerCards).poll();
+        ((Queue<Card>) playerCards).offer(BestCard);
+        for (String playerName : this.playerCards.keySet()) {
+            if (((Queue<Card>)playerCards).peek().getValue().compareTo(BestCard.getValue()) > 0) {
+                BestCard = ((Queue<Card>) playerCards).poll();
+                ((Queue<Card>) playerCards).offer(BestCard);
+            }
+        }
+        return BestCard;
+
+    }
+
+    public boolean verifyPair() {
+        int count = 0;
+        Card currrentCard = ((Queue<Card>) playerCards).poll();
+        ((Queue<Card>) playerCards).offer(currrentCard);
+        for (String playerName : this.playerCards.keySet()) {
+            if (((Queue<Card>) playerCards).peek().getValue().compareTo(currrentCard.getValue()) == 0) {
+                count++;
+            }
+        }
+        if (count==2){
+            return true;
+        }
+        return false;
+    }
+
+    public boolean verifyBrelon() {
+        int count = 0;
+        Card currrentCard = ((Queue<Card>) playerCards).poll();
+        ((Queue<Card>) playerCards).offer(currrentCard);
+        for (String playerName : this.playerCards.keySet()) {
+            if (((Queue<Card>) playerCards).peek().getValue().compareTo(currrentCard.getValue()) == 0) {
+                count++;
+            }
+        }
+        if (count==3){
+            return true;
+        }
+        return false;
+    }
+
+    public boolean verifyCarre() {
+        int count = 0;
+        Card currrentCard = ((Queue<Card>) playerCards).poll();
+        ((Queue<Card>) playerCards).offer(currrentCard);
+        for (String playerName : this.playerCards.keySet()) {
+            if (((Queue<Card>) playerCards).peek().getValue().compareTo(currrentCard.getValue()) == 0) {
+                count++;
+            }
+        }
+        if (count==4){
+            return true;
+        }
+        return false;
+    }
+
+    protected void playCard() {
+
+        for (String playerName : this.playerCards.keySet()) {
+
+        }
+
     }
 }

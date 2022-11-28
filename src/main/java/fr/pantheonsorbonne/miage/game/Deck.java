@@ -3,6 +3,8 @@ package fr.pantheonsorbonne.miage.game;
 import fr.pantheonsorbonne.miage.enums.CardColor;
 import fr.pantheonsorbonne.miage.enums.CardValue;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -10,6 +12,7 @@ import java.util.Random;
  */
 public class Deck {
 
+    public List<Card> cartes = new ArrayList<Card>();
     private final static Random random = new Random();
     private static int deckSize = CardValue.values().length * CardColor.values().length;
     private final static Card[] deck = new Card[deckSize];
@@ -57,4 +60,13 @@ public class Deck {
     private static Card newRandomCard() {
         return deck[deckSize-- - 1];
     }
+
+    public boolean contient(Card carte) {
+		for (Card carteDeck : this.cartes) {
+			if (carte.equals(carteDeck)) {
+				return true;
+			}
+		}
+		return false;
+	}
 }

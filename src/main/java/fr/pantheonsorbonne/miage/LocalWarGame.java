@@ -130,16 +130,18 @@ public class LocalWarGame extends WarGameEngine {
         return firstPartie;
     }
 
-    protected Card getBestCardinPlayerHand(Map<String, ArrayList<Card>> playerCards) {
-        Card BestCard = ((ArrayList<Card>) playerCards).get(0);
+    protected ArrayList<Card> getBestCardinPlayerHand(Map<String, ArrayList<Card>> playerCards) {
+        ArrayList<Card> bestCard = new ArrayList();
+        bestCard.add(((ArrayList<Card>) playerCards).get(0));
         for (Map.Entry m : playerCards.entrySet()) {
             for (int i = 1; i < playerCards.size(); i++) {
-                if (((ArrayList<Card>) playerCards).get(i).getValue().compareTo(BestCard.getValue()) > 0) {
-                    BestCard = ((ArrayList<Card>) playerCards).get(i);
+                if (((ArrayList<Card>) playerCards).get(i).getValue().compareTo(bestCard.get(0).getValue()) > 0) {
+                    bestCard.remove(((ArrayList<Card>) playerCards).get(0));
+                    bestCard.add(((ArrayList<Card>) playerCards).get(i));
                 }
             }
         }
-        return BestCard;
+        return bestCard;
 
     }
     ArrayList<Card> manyCardPlayed = new ArrayList<>();
@@ -205,14 +207,14 @@ public class LocalWarGame extends WarGameEngine {
         return false;
     }
 
-    public Card  CardWhichThePlayerAreGoingToPlay(){
-        if (verifyPair(playerCards)){
-            return manyCardPlayed;
-        }
-        if (verifyBrelon(playerCards)){
-            return manyCardPlayed;
-        }
+    public ArrayList<Card>  CardWhichThePlayerAreGoingToPlay(){
         if (verifyCarre(playerCards)){
+            return manyCardPlayed;
+        }
+        else if (verifyBrelon(playerCards)){
+            return manyCardPlayed;
+        }
+        else if (verifyPair(playerCards)){
             return manyCardPlayed;
         }
         else{

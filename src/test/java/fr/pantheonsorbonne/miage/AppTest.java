@@ -3,6 +3,7 @@ package fr.pantheonsorbonne.miage;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -34,8 +35,8 @@ public class AppTest
         players.add("J2");
 
         var test1 = new LocalWarGame(players);
-        Queue<Card> cardJ1 = new LinkedList<>();
-        Queue<Card> cardJ2 = new LinkedList<>();
+        ArrayList<Card> cardJ1 = new ArrayList<>();
+        ArrayList<Card> cardJ2 = new ArrayList<>();
         cardJ1.add(Card.valueOf("QH"));
         cardJ2.add(Card.valueOf("KH"));
 
@@ -66,20 +67,20 @@ public class AppTest
     }
 
     @Test
-    public void findBestCardinPlayerHand() {
+    public void getBestCardinPlayerHand() {
         HashSet<String> players = new HashSet<>();
         players.add("J1");
 
         var test3 = new LocalWarGame(players);
-        Queue<Card> cardJ1 = new LinkedList<>();
-        Queue<Card> cardJ2 = new LinkedList<>();
+        ArrayList<Card> cardJ1 = new ArrayList<>();
+        ArrayList<Card> cardJ2 = new ArrayList<>();
         cardJ1.add(Card.valueOf("QH"));
         cardJ2.add(Card.valueOf("KH"));
 
         test3.playerCards.put("J1", cardJ1);
         test3.playerCards.put("J1", cardJ2);
 
-        assertEquals("KH", test3.findBestCardinPlayerHand());
+        assertEquals("KH", test3.getBestCardinPlayerHand());
     }
 
 }

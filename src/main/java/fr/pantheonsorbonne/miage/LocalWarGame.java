@@ -15,13 +15,13 @@ public class LocalWarGame extends WarGameEngine {
 
     final Set<String> initialPlayers;
     Queue<Card> carte = new LinkedList<>();
-    final Map<String, Queue<Card>> playerCards = new HashMap<>();
+    final Map<String, ArrayList<Card>> playerCards = new HashMap<>();
     final Map<String, Queue<Role>> playerRole = new HashMap<>();
 
     public LocalWarGame(Set<String> initialPlayers) {
         this.initialPlayers = initialPlayers;
         for (String player : initialPlayers) {
-            playerCards.put(player, new LinkedList<>());
+            playerCards.put(player, new ArrayList<>());
             playerRole.put(player, new LinkedList<>());
         }
     }
@@ -73,7 +73,7 @@ public class LocalWarGame extends WarGameEngine {
             this.playerCards.remove(cardProviderPlayer);
             return null;
         } else {
-            return this.playerCards.get(cardProviderPlayer).poll();
+            return ((Queue<Card>) this.playerCards.get(cardProviderPlayer)).poll();
         }
     }
 
@@ -90,7 +90,7 @@ public class LocalWarGame extends WarGameEngine {
         if (this.playerCards.get(player).isEmpty()) {
             throw new NoMoreCardException();
         } else {
-            return this.playerCards.get(player).poll();
+            return ((Queue<Card>) this.playerCards.get(player)).poll();
         }
     }
 
@@ -130,65 +130,98 @@ public class LocalWarGame extends WarGameEngine {
         return firstPartie;
     }
 
-    protected Card findBestCardinPlayerHand() {
-        Card BestCard = ((Queue<Card>) playerCards).poll();
-        ((Queue<Card>) playerCards).offer(BestCard);
-        for (String playerName : this.playerCards.keySet()) {
-            if (((Queue<Card>)playerCards).peek().getValue().compareTo(BestCard.getValue()) > 0) {
-                BestCard = ((Queue<Card>) playerCards).poll();
-                ((Queue<Card>) playerCards).offer(BestCard);
+    protected Card getBestCardinPlayerHand(Map<String, ArrayList<Card>> playerCards) {
+        Card BestCard = ((ArrayList<Card>) playerCards).get(0);
+        for (Map.Entry m : playerCards.entrySet()) {
+            for (int i = 1; i < playerCards.size(); i++) {
+                if (((ArrayList<Card>) playerCards).get(i).getValue().compareTo(BestCard.getValue()) > 0) {
+                    BestCard = ((ArrayList<Card>) playerCards).get(i);
+                }
             }
         }
         return BestCard;
 
     }
+    ArrayList<Card> manyCardPlayed = new ArrayList<>();
 
-    public boolean verifyPair() {
+    public boolean verifyPair(Map<String, ArrayList<Card>> playerCards) {
         int count = 0;
-        Card currrentCard = ((Queue<Card>) playerCards).poll();
-        ((Queue<Card>) playerCards).offer(currrentCard);
-        for (String playerName : this.playerCards.keySet()) {
-            if (((Queue<Card>) playerCards).peek().getValue().compareTo(currrentCard.getValue()) == 0) {
-                count++;
+        Card currentCard = ((ArrayList<Card>) playerCards).get(0); 
+        manyCardPlayed.add(currentCard);
+        for (String playerName : this.playerRole.keySet()) {
+            for (int i = 1; i < playerCards.size(); i++) {
+                if (((ArrayList<Card>) playerCards).get(i).getValue().compareTo(currentCard.getValue()) == 0) {
+                    Card cardCarre = ((ArrayList<Card>) playerCards).get(i);
+                    manyCardPlayed.add(cardCarre);
+                    count++;
+                }
             }
         }
-        if (count==2){
+
+            if (count == 2) {
+                return true;
+            }
+        
+        return false;
+
+    }
+
+    public boolean verifyBrelon(Map<String, ArrayList<Card>> playerCards) {
+        int count = 0;
+        Card currentCard = ((ArrayList<Card>) playerCards).get(0);
+        manyCardPlayed.add(currentCard);
+        for (String playerName : this.playerRole.keySet()) {
+            for (int i = 1; i < playerCards.size(); i++) {
+                if (((ArrayList<Card>) playerCards).get(i).getValue().compareTo(currentCard.getValue()) == 0) {
+                    Card cardCarre = ((ArrayList<Card>) playerCards).get(i);
+                    manyCardPlayed.add(cardCarre);
+                    count++;
+                }
+            }
+        }
+            if (count == 3) {
+                return true;
+            }
+        
+        return false;
+    }
+
+    public boolean verifyCarre(Map<String, ArrayList<Card>> playerCards) {
+        int count = 0;
+        Card currentCard = ((ArrayList<Card>) playerCards).get(0);
+        manyCardPlayed.add(currentCard);
+        for (String playerName : this.playerRole.keySet()) {
+            for (int i = 1; i < playerCards.size(); i++) {
+                if (((ArrayList<Card>) playerCards).get(i).getValue().compareTo(currentCard.getValue()) == 0) {
+                    Card cardCarre = ((ArrayList<Card>) playerCards).get(i);
+                    manyCardPlayed.add(cardCarre);
+                    count++;
+                }
+            }
+        }
+        if (count == 4) {
             return true;
         }
         return false;
     }
 
-    public boolean verifyBrelon() {
-        int count = 0;
-        Card currrentCard = ((Queue<Card>) playerCards).poll();
-        ((Queue<Card>) playerCards).offer(currrentCard);
-        for (String playerName : this.playerCards.keySet()) {
-            if (((Queue<Card>) playerCards).peek().getValue().compareTo(currrentCard.getValue()) == 0) {
-                count++;
-            }
+    public Card  CardWhichThePlayerAreGoingToPlay(){
+        if (verifyPair(playerCards)){
+            return manyCardPlayed;
         }
-        if (count==3){
-            return true;
+        if (verifyBrelon(playerCards)){
+            return manyCardPlayed;
         }
-        return false;
+        if (verifyCarre(playerCards)){
+            return manyCardPlayed;
+        }
+        else{
+            return getBestCardinPlayerHand(playerCards);
+        }
+
     }
 
-    public boolean verifyCarre() {
-        int count = 0;
-        Card currrentCard = ((Queue<Card>) playerCards).poll();
-        ((Queue<Card>) playerCards).offer(currrentCard);
-        for (String playerName : this.playerCards.keySet()) {
-            if (((Queue<Card>) playerCards).peek().getValue().compareTo(currrentCard.getValue()) == 0) {
-                count++;
-            }
-        }
-        if (count==4){
-            return true;
-        }
-        return false;
-    }
-
-    protected void playCard() {
+    protected void PlayCard() {
 
         for (String playerName : this.playerCards.keySet()) {
 

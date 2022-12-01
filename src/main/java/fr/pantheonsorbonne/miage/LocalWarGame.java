@@ -147,7 +147,7 @@ public class LocalWarGame extends WarGameEngine {
     ArrayList<Card> manyCardPlayed = new ArrayList<>();
 
     public boolean verifyPair(Map<String, ArrayList<Card>> playerCards) {
-        int count = 0;
+        int count = 1;
         Card currentCard = ((ArrayList<Card>) playerCards).get(0); 
         manyCardPlayed.add(currentCard);
         for (String playerName : this.playerRole.keySet()) {
@@ -169,7 +169,7 @@ public class LocalWarGame extends WarGameEngine {
     }
 
     public boolean verifyBrelon(Map<String, ArrayList<Card>> playerCards) {
-        int count = 0;
+        int count = 1;
         Card currentCard = ((ArrayList<Card>) playerCards).get(0);
         manyCardPlayed.add(currentCard);
         for (String playerName : this.playerRole.keySet()) {
@@ -189,7 +189,7 @@ public class LocalWarGame extends WarGameEngine {
     }
 
     public boolean verifyCarre(Map<String, ArrayList<Card>> playerCards) {
-        int count = 0;
+        int count = 1;
         Card currentCard = ((ArrayList<Card>) playerCards).get(0);
         manyCardPlayed.add(currentCard);
         for (String playerName : this.playerRole.keySet()) {

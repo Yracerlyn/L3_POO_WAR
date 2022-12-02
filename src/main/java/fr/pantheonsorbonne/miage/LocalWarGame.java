@@ -14,7 +14,6 @@ import java.util.stream.Collectors;
 public class LocalWarGame extends WarGameEngine {
 
     final Set<String> initialPlayers;
-    Queue<Card> carte = new LinkedList<>();
     final Map<String, ArrayList<Card>> playerCards = new HashMap<>();
     final Map<String, Queue<Role>> playerRole = new HashMap<>();
 
@@ -106,7 +105,7 @@ public class LocalWarGame extends WarGameEngine {
         throw new RuntimeException();
     }
 
-    private final static Role PRESIDENT = Role.HaveRole("1");
+    private final static Role PRESIDENT = Role.haveRole("1");
 
     @Override
     protected String getPresident() {
@@ -130,7 +129,7 @@ public class LocalWarGame extends WarGameEngine {
         return firstPartie;
     }
 
-    protected ArrayList<Card> getBestCardinPlayerHand(Map<String, ArrayList<Card>> playerCards) {
+    protected ArrayList<Card> getBestCardinPlayerHand() {
         ArrayList<Card> bestCard = new ArrayList();
         bestCard.add(((ArrayList<Card>) playerCards).get(0));
         for (Map.Entry m : playerCards.entrySet()) {
@@ -144,6 +143,7 @@ public class LocalWarGame extends WarGameEngine {
         return bestCard;
 
     }
+
     ArrayList<Card> manyCardPlayed = new ArrayList<>();
 
     public boolean verifyPair(Map<String, ArrayList<Card>> playerCards) {
@@ -207,7 +207,7 @@ public class LocalWarGame extends WarGameEngine {
         return false;
     }
 
-    public ArrayList<Card>  CardWhichThePlayerAreGoingToPlay(){
+    public ArrayList<Card>  cardWhichThePlayerAreGoingToPlay(){
         if (verifyCarre(playerCards)){
             return manyCardPlayed;
         }
@@ -218,16 +218,15 @@ public class LocalWarGame extends WarGameEngine {
             return manyCardPlayed;
         }
         else{
-            return getBestCardinPlayerHand(playerCards);
+            return ((LocalWarGame) playerCards).getBestCardinPlayerHand();
         }
 
     }
 
-    protected void PlayCard() {
-
-        for (String playerName : this.playerCards.keySet()) {
-
-        }
-
+    protected ArrayList<Card> passHisTurn(String player){
+        ArrayList<Card> vide= new ArrayList<>();
+        return vide;
     }
+
+    
 }

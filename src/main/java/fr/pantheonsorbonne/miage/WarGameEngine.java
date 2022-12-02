@@ -85,17 +85,8 @@ public abstract class WarGameEngine {
     protected abstract String getPlayerWithQueenOFHeart();
     protected abstract String getPresident();
     protected abstract boolean getFirstParty();
-    protected boolean isInferieure() {
-		return this.cartes.get(0).getValue().compareTo(this.pile.getCartes().get(this.pile.getCartes().size() - 1).getValue()) < 0;
-	}
 
-    protected boolean isSuperieure() {
-		return this.cartes.get(0).getValue().compareTo(this.pile.getCartes().get(this.pile.getCartes().size() - 1).getValue()) > 0;
-	}
-
-    private boolean isEgale() {
-		return this.cartes.get(0).getValue().compareTo(this.pile.getCartes().get(this.pile.getCartes().size() - 1).getValue()) == 0;
-	}
+   
 
     /**
      * provide the list of the initial players to play the game

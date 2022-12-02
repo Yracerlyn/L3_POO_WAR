@@ -10,7 +10,7 @@ public class Role {
         this.role= value;
     }
 
-    public static Role HaveRole(String str) {
+    public static Role haveRole(String str) {
         RoleValue value;
         value = RoleValue.valueOfStr(str.substring(0, 1));
         return new Role(value);

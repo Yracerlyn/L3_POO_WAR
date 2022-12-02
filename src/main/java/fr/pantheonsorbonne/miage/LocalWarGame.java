@@ -1,9 +1,8 @@
 package fr.pantheonsorbonne.miage;
 
+import fr.pantheonsorbonne.miage.enums.RoleValue;
 import fr.pantheonsorbonne.miage.exception.NoMoreCardException;
 import fr.pantheonsorbonne.miage.game.Card;
-import fr.pantheonsorbonne.miage.game.Role;
-import fr.pantheonsorbonne.miage.enums.CardValue;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -15,13 +14,13 @@ public class LocalWarGame extends WarGameEngine {
 
     final Set<String> initialPlayers;
     final Map<String, ArrayList<Card>> playerCards = new HashMap<>();
-    final Map<String, Queue<Role>> playerRole = new HashMap<>();
+    final Map<String, RoleValue> playerRole = new HashMap<>();
 
     public LocalWarGame(Set<String> initialPlayers) {
         this.initialPlayers = initialPlayers;
         for (String player : initialPlayers) {
             playerCards.put(player, new ArrayList<>());
-            playerRole.put(player, new LinkedList<>());
+
         }
     }
 
@@ -93,7 +92,47 @@ public class LocalWarGame extends WarGameEngine {
         }
     }
 
+    @Override
+    public String getTrou() {
+        return getRole(RoleValue.TROU);
+    }
+
     private final static Card DAME_COEUR = Card.valueOf("QH");
+
+    @Override
+    protected void addFinishedPlayer(String currPlayer) {
+
+    }
+
+    @Override
+    protected int getCurrentPlayerCount() {
+        return 0;
+    }
+
+    @Override
+    protected boolean isTapisFinished(Collection<Card> tapis) {
+        return false;
+    }
+
+    @Override
+    protected String getNextPlayer(String currPlayer) {
+        return null;
+    }
+
+    @Override
+    protected Collection<Card> playerPlayCards(String currPlayer, Collection<Card> tapis) throws NoMoreCardException {
+        return null;
+    }
+
+    @Override
+    protected Collection<Card> getBestCardsFromPlayer(String trou, int countCard) {
+        return null;
+    }
+
+    @Override
+    protected Collection<Card> getWorstCardsFromPlayer(String firstPlayerInRound, int countCard) {
+        return null;
+    }
 
     @Override
     protected String getPlayerWithQueenOFHeart() {
@@ -105,12 +144,22 @@ public class LocalWarGame extends WarGameEngine {
         throw new RuntimeException();
     }
 
-    private final static Role PRESIDENT = Role.haveRole("1");
+
 
     @Override
     protected String getPresident() {
+      return this.getRole(RoleValue.PRESIDENT);
+    }
+
+
+    protected String getVicePresident() {
+        return this.getRole(RoleValue.VICE_PRESIDENT);
+    }
+
+
+    protected String getRole(RoleValue role) {
         for (String playerName : this.playerRole.keySet()) {
-            if (this.playerRole.get(playerName).contains(PRESIDENT)) {
+            if (this.playerRole.get(playerName).equals(role)) {
                 return playerName;
             }
         }

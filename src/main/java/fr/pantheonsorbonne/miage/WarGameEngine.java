@@ -1,16 +1,12 @@
 package fr.pantheonsorbonne.miage;
 
 import fr.pantheonsorbonne.miage.exception.NoMoreCardException;
+import fr.pantheonsorbonne.miage.exception.NoMorePlayerException;
 import fr.pantheonsorbonne.miage.game.Card;
 import fr.pantheonsorbonne.miage.game.Deck;
-import fr.pantheonsorbonne.miage.game.Role;
 import fr.pantheonsorbonne.miage.game.pile;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Set;
+import java.util.*;
 
 /**
  * this class is a abstract version of the engine, to be used locally on through the network
@@ -19,38 +15,72 @@ public abstract class WarGameEngine {
 
     public static final int CARDS_IN_HAND_INITIAL_COUNT = 13;
     protected boolean firstPartie = true;
-    final protected int [] numberParty = new int [2];
+    final protected int[] numberParty = new int[2];
     private pile pile;
     private ArrayList<Card> cartes;
-    
+
     /**
      * play a war game wit the provided players
      */
-    public void play() {
-        //send the initial hand to every players
-        for (String playerName : getInitialPlayers()) {
-            //get random cards
-            Card[] cards = Deck.getRandomCards(CARDS_IN_HAND_INITIAL_COUNT);
-            // transform them to String
-            String hand = Card.cardsToString(cards);
-            //send them to this players
-            giveCardsToPlayer(playerName, hand);
-        }
-        // make a queue with all the players
-        final Queue<String> players = new LinkedList<>();
-        players.addAll(this.getInitialPlayers());
+    public void play()  {
+        for(int i=0;i<3;i++) {
+            //send the initial hand to every players
+            for (String playerName : getInitialPlayers()) {
+                //get random cards
+                Card[] cards = Deck.getRandomCards(CARDS_IN_HAND_INITIAL_COUNT);
+                // transform them to String
+                String hand = Card.cardsToString(cards);
+                //send them to this players
+                giveCardsToPlayer(playerName, hand);
+            }
+            // make a queue with all the players
+            final Queue<String> players = new LinkedList<>();
+            players.addAll(this.getInitialPlayers());
+            String firstPlayerInRound = "";
 
-        if (getFirstParty()){
-            String firstPlayerInRound = ((LocalWarGame) players).getPlayerWithQueenOFHeart();
 
-        }
-        else{
-            String firstPlayerInRound= ((LocalWarGame)players).getPresident();
-        }
+            if (getFirstParty()) {
+                firstPlayerInRound = this.getPlayerWithQueenOFHeart();
 
-       
+            } else {
+                firstPlayerInRound = this.getPresident();
+                Collection<Card> presCards = this.getWorstCardsFromPlayer(firstPlayerInRound, 2);
+                Collection<Card> trouCards = this.getBestCardsFromPlayer(this.getTrou(), 2);
+                this.giveCardsToPlayer(trouCards, firstPlayerInRound);
+                this.giveCardsToPlayer(presCards, this.getTrou());
+            }
 
-        //repeat until only 1 player is left
+            String currPlayer = firstPlayerInRound;
+            Collection<Card> tapis = Collections.emptyList();
+            int skipped = 0;
+            while (this.getCurrentPlayerCount() >= 2) {
+                Collection<Card> playedCardByPlayer = null;
+                try {
+                    playedCardByPlayer = this.playerPlayCards(currPlayer, tapis);
+                } catch (NoMoreCardException e) {
+                    this.addFinishedPlayer(currPlayer);
+                    currPlayer=this.getNextPlayer(currPlayer);
+                }
+                if (playedCardByPlayer.isEmpty()) {
+                    skipped++;
+                }
+                if (skipped == this.getCurrentPlayerCount() - 1) {
+                    tapis = Collections.emptyList();
+                    continue;
+                }
+                if (!this.isTapisFinished(tapis)) {
+                    currPlayer = this.getNextPlayer(currPlayer);
+                } else {
+                    tapis = Collections.emptyList();
+                    continue;
+                }
+
+
+            }
+            this.addFinishedPlayer(currPlayer);
+
+
+            //repeat until only 1 player is left
         /*while (players.size() > 1) {
             //these are the cards played by the players on this round
             Queue<Card> roundDeck = new LinkedList<>();
@@ -74,19 +104,58 @@ public abstract class WarGameEngine {
      
 
         }   */
-        //since we've left the loop, we have only 1 player left: the winner
-        String winner = players.poll();
+            //since we've left the loop, we have only 1 player left: the winner
+        }
+        String winner = null; //TODO dire qui est le prés
         //send him the gameover and leave
         declareWinner(winner);
         System.out.println(winner + " won! bye");
         System.exit(0);
     }
 
+    /**
+     * add the player to the collection of the player that have no more cards
+     * @param currPlayer the player that has no more cards
+     */
+    protected abstract void addFinishedPlayer(String currPlayer);
+
+    /**
+     *
+     * @return the number of player still playing to the game
+     */
+    protected abstract int getCurrentPlayerCount();
+
+    /**
+     *
+     * @param tapis the current tapis
+     * @return true if no other card can be played (all 2)
+     */
+    protected abstract boolean isTapisFinished(Collection<Card> tapis);
+
+    /**
+     *
+     * @param currPlayer last player to have played
+     * @return the next player to play
+     */
+    protected abstract String getNextPlayer(String currPlayer);
+
+    /**
+     * @param currPlayer the player to play the cards
+     * @param tapis      the current state of the tapis
+     * @return a collection of cards played by the player, the c ollection is empty if the player cannot play
+     */
+    protected abstract Collection<Card> playerPlayCards(String currPlayer, Collection<Card> tapis) throws NoMoreCardException;
+
+    protected abstract Collection<Card> getBestCardsFromPlayer(String trou, int i);
+
+    protected abstract Collection<Card> getWorstCardsFromPlayer(String firstPlayerInRound, int i);
+
     protected abstract String getPlayerWithQueenOFHeart();
+
     protected abstract String getPresident();
+
     protected abstract boolean getFirstParty();
 
-   
 
     /**
      * provide the list of the initial players to play the game
@@ -120,19 +189,19 @@ public abstract class WarGameEngine {
         //while (!endRound && consecutiveNoPlays>1) {}
 
         //while (!players.isEmpty() && players.size()>0)
-        
-            //here, we try to get the first player card
-            Card firstPlayerCard = getCardOrGameOver(roundDeck, firstPlayerInRound, secondPlayerInRound);
-            if (firstPlayerCard == null) {
-                players.remove(firstPlayerInRound);
-                return true;
-            }
-            //here we also get the second player card
-            Card secondPlayerCard = getCardOrGameOver(roundDeck, secondPlayerInRound, firstPlayerInRound);
-            if (secondPlayerCard == null) {
-                players.remove(secondPlayerInRound);
-                return true;
-            } 
+
+        //here, we try to get the first player card
+        Card firstPlayerCard = getCardOrGameOver(roundDeck, firstPlayerInRound, secondPlayerInRound);
+        if (firstPlayerCard == null) {
+            players.remove(firstPlayerInRound);
+            return true;
+        }
+        //here we also get the second player card
+        Card secondPlayerCard = getCardOrGameOver(roundDeck, secondPlayerInRound, firstPlayerInRound);
+        if (secondPlayerCard == null) {
+            players.remove(secondPlayerInRound);
+            return true;
+        }
 
 
             
@@ -173,7 +242,7 @@ public abstract class WarGameEngine {
      */
     protected abstract Card getCardOrGameOver(Collection<Card> leftOverCard, String cardProviderPlayer, String cardProviderPlayerOpponent);
 
-    /**  
+    /**
      * give the winner of a round
      *
      * @param contestantA     a contestant
@@ -207,4 +276,6 @@ public abstract class WarGameEngine {
      * @throws NoMoreCardException if the player does not have a remaining card
      */
     protected abstract Card getCardFromPlayer(String player) throws NoMoreCardException;
+
+    public abstract String getTrou();
 }

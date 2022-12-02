@@ -8,10 +8,10 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import fr.pantheonsorbonne.miage.enums.RoleValue;
 import org.junit.jupiter.api.Test;
 
 import fr.pantheonsorbonne.miage.game.Card;
-import fr.pantheonsorbonne.miage.game.Role;
 
 /**
  * Unit test for simple App.
@@ -53,16 +53,12 @@ public class AppTest
         players.add("J2");
 
         var test2 = new LocalWarGame(players);
-        Queue<Role> role1 = new LinkedList<>();
-        Queue<Role> role2 = new LinkedList<>();
 
-        role1.add(Role.haveRole("1"));
-        role2.add(Role.haveRole("2"));
-
-        test2.playerRole.put("J1", role1);
-        test2.playerRole.put("J2", role2);
+        test2.playerRole.put("J1", RoleValue.PRESIDENT);
+        test2.playerRole.put("J2", RoleValue.TROU);
 
         assertEquals("J1", test2.getPresident());
+        assertEquals("J2", test2.getTrou());
 
     }
 

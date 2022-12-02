@@ -136,6 +136,46 @@ public class WarGameNetworkEngine extends WarGameEngine {
     }
 
     @Override
+    public String getTrou() {
+        return null;
+    }
+
+    @Override
+    protected void addFinishedPlayer(String currPlayer) {
+
+    }
+
+    @Override
+    protected int getCurrentPlayerCount() {
+        return 0;
+    }
+
+    @Override
+    protected boolean isTapisFinished(Collection<Card> tapis) {
+        return false;
+    }
+
+    @Override
+    protected String getNextPlayer(String currPlayer) {
+        return null;
+    }
+
+    @Override
+    protected Collection<Card> playerPlayCards(String currPlayer, Collection<Card> tapis) throws NoMoreCardException {
+        return null;
+    }
+
+    @Override
+    protected Collection<Card> getBestCardsFromPlayer(String trou, int i) {
+        return null;
+    }
+
+    @Override
+    protected Collection<Card> getWorstCardsFromPlayer(String firstPlayerInRound, int i) {
+        return null;
+    }
+
+    @Override
     protected String getPlayerWithQueenOFHeart() {
         // TODO Auto-generated method stub
         return null;
